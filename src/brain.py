@@ -79,4 +79,4 @@ class Brain:
 
 
 alpha=Brain()
-alpha.chatWithTuringOne("danger")
+alpha.chatWithTuringOne(u"火星人 小狐狸")
