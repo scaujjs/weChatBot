@@ -74,7 +74,9 @@ class Communication:
         messages=list()
         indexOfSent=0
         indexOfReceied=0
+        print "message in chat"
         print len(messagesInChat)
+        print
         for i in range(len(messagesInChat)):
             if indexOfSent<=len(messagesIsent)-1 and messagesInChat[i]==messagesIsent[indexOfSent]:
                 indexOfSent=indexOfSent+1
@@ -86,21 +88,33 @@ class Communication:
                 messages.append(message)
 
         self.reduceReplicationAndAddTohistory(messages)
+
         return self.moveNewToOld()
 
 
     def moveNewToOld(self):
+##        print "hitory beofre"
+##        print(repr(self.history).decode('unicode-escape'))
         messagesToProcess=list()
         for i in range(len(self.newMessage)):
-            messagesToProcess.append(copy.copy(self.newMessage[i]))
-            self.history.append(copy.copy(self.newMessage[i]))
+            messagesToProcess.append(copy.deepcopy(self.newMessage[i]))
+            self.history.append(copy.deepcopy(self.newMessage[i]))
         self.newMessage=list()
+
+##        print "hitory after"
+        print(repr(self.history).decode('unicode-escape'))
+        print len(self.history)
+        print
+##        print "after the self.newMessage should be empty"
+##        print len(self.newMessage)
 
         return messagesToProcess
 
 
 
     def reduceReplicationAndAddTohistory(self,messages):
+
+
         position=-1
         if len(self.history)==0:
             pass
@@ -109,43 +123,63 @@ class Communication:
             position=0
 
         elif len(self.history)<helper.RANGE:
-            print "error"
-            print len(self.history)
             for i in range(len(self.history)):
+
                 if position!=-1:
                     break
                 if self.isTwoMessageTheSame(self.history[i],messages[0]) :
-
+                    flag=True
                     for j in range(helper.THREHOLD):
                         if self.isTwoMessageTheSame(self.history[i+j],messages[j]) :
-                            continue
+                            pass
                         else:
-
+                            flag=False
                             break
-                    position=i
-                    break
+                    if flag:
+                        position=i
+
         else:
             for i in range(helper.RANGE):
                 if position != -1:
                     break
                 if self.isTwoMessageTheSame(self.history[-helper.RANGE+i], messages[0]):
-
+                    flag = True
                     for j in range(helper.THREHOLD):
                         if self.isTwoMessageTheSame(self.history[-helper.RANGE+i+j],messages[j]):
-                            continue
+                            pass
                         else:
+                            flag=False
                             break
-                    position=-helper.RANGE+i
-                    break
+                    if flag:
+                        position=len(self.history)-helper.RANGE+i
+
 
         if position==-1:
             self.newMessage=messages
         else:
+            print "here is the reduce function"
+
+
             length=len(self.history)-position
+
             lengthOfNewMessages=len(messages)-length
+
+            if lengthOfNewMessages<0:
+                while(1):
+                    print lengthOfNewMessages
+                    helper.sleepForUpdate(5)
+                    print "eror"
+            print "is the wrong one happen here before"
+            print len(self.newMessage)
             for i in range(lengthOfNewMessages):
                 self.newMessage.append(messages[length+i])
 
+ ##           print "length"
+ ##           print length
+ ##           print "lengthOfNewMessages"
+ ##           print lengthOfNewMessages
+ ##           print "is the wrong one happen here"
+ ##           print len(self.newMessage)
 
 
 

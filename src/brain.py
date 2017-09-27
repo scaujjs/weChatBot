@@ -40,9 +40,7 @@ class Brain:
             request = urllib2.Request(url, postdata)
             response = urllib2.urlopen(request)
             replyContent=json.load(response)[u'text']
-            print "from bot"
-            print(repr(replyContent).decode('unicode-escape'))
-            print
+
 
             reply=(message[helper.NAMEINDEX],replyContent)
             replys.append(reply)
@@ -52,15 +50,13 @@ class Brain:
             return replys
 
     def chatWithTuringOne(self,name):
+        newCommunication = Communication.Communication(name, self.wechatBot)
         while(True):
             self.wechatBot.switchToChatAreaBySearch(name)
-            newCommunication = Communication.Communication(name, self.wechatBot)
             newMessages = newCommunication.readRecentMessage()
             newMessages = helper.filterNewMessageIreceived(newMessages)
 
-            print "newMessage"
-            print(repr(newMessages).decode('unicode-escape'))
-            print
+
             if(len(newMessages)!=0):
                 replys = self.getReplyFromTuring(newMessages)
                 self.sendMessage(replys)
@@ -79,4 +75,4 @@ class Brain:
 
 
 alpha=Brain()
-alpha.chatWithTuringOne(u"火星人 小狐狸")
+alpha.chatWithTuringOne(u"")
